@@ -42,7 +42,7 @@ app.Use(async (ctx, next) => {
         } else if (ctx.Request.Headers.ContainsKey("auth")) { // Since it isn't a websocket, check to make sure it contains an auth key in the request header
             // TODO, delete this. Only used for testing requests with postman.
             if (ctx.Request.Headers["auth"].Equals("dev")) {
-                ctx.Request.Headers.Add("user", "{\"id\": \"dev\"}");
+                ctx.Request.Headers.Add("user", "{\"Uid\": \"dev\"}");
                 await next(ctx);
                 return;
             } else {

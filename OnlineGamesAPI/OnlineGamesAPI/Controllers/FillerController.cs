@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using OnlineGamesAPI.Data;
 using OnlineGamesAPI.Data.Models;
 using OnlineGamesAPI.Utils;
+using System.Text;
 
 namespace OnlineGamesAPI.Controllers {
     [ApiController]
@@ -23,27 +24,35 @@ namespace OnlineGamesAPI.Controllers {
 
 
             FillerGameModel game = new FillerGameModel();
-            game.GameId = "0";
-            game.CreatorId = jObject["id"].ToString();
-            game.Players = jObject["id"].ToString() + ',';
+            game.GameId = "1";
+            game.CreatorId = jObject["Uid"].ToString();
+            game.Players = jObject["Uid"].ToString() + ',';
             game.GameCreationTime = DateTime.Now.Ticks;
             game.LastActiveTime = DateTime.Now.Ticks;
             game.GameData = Helper.InitializeFillerGameData(size);
 
             await db.FillerGames.AddAsync(game);
+            await db.SaveChangesAsync();
             Console.WriteLine("Added game to db");
             return Ok();
         }
 
         [HttpGet]
-        [Route("getgamestate")]
+        [Route("getgamestate/{gameId}")]
         public async Task<IActionResult> GetGameState(int gameId) {
+            FillerGameModel game = await db.FillerGames.FindAsync(gameId.ToString());
+            if (game == null) {
+                return NotFound();
+            }
 
+            UserModel user = Helper.GetUserModelFromJson(HttpContext.Request.Headers["user"]);
+            if (!game.Players.Contains(user.Id)) {
+                return BadRequest();
+            }
 
+            await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(game.GameData));
 
-
-
-            return Ok();
+            return new EmptyResult();
         }
     }
 }

@@ -9,6 +9,15 @@ namespace OnlineGamesAPI.Utils {
         public static UserModel GetUserModelFromJson(string json) {
             JObject jObject = JsonConvert.DeserializeObject<JObject>(json)!;
 
+            if (jObject["Uid"]!.ToString().Equals("dev")) {
+                return new UserModel() {
+                    Id = jObject["Uid"]!.ToString(),
+                    Email = "dev@test.com",
+                    AccountCreateTime = 0L,
+                    LastSigninTime = 0L
+                };
+            }
+
             return new UserModel() {
                 Id = jObject["Uid"]!.ToString(),
                 Email = jObject["Claims"]!["email"]!.ToString(),
