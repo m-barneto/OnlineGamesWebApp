@@ -1,0 +1,20 @@
+.game {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  
+}
+
+.gameboard {
+  display: grid;
+  width: 900px; /* 30vw */
+  height: 900px;
+  background-color: rgb(14, 14, 14);
+  border-radius: 9px;
+  padding: 2px;
+}
+
+.tile {
+  border-radius: 9px;
+  margin: 3px;
+}
