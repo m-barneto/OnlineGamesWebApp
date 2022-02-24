@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 namespace OnlineGamesAPI.Data.Models {
     public class InviteModel {
         [Key]
+        public string InviteCode { get; set; } = string.Empty;
+
+        [Required]
         public string CreatorId { get; set; } = string.Empty;
 
         [Required]

@@ -34,7 +34,7 @@ namespace OnlineGamesAPI.Controllers {
             await db.FillerGames.AddAsync(game);
             await db.SaveChangesAsync();
             Console.WriteLine("Added game to db");
-            return Ok();
+            return new EmptyResult();
         }
 
         [HttpGet]

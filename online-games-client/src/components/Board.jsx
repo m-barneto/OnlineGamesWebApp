@@ -15,18 +15,14 @@ export default class Board extends Component {
   constructor(props) {
     super(props);
 
-    let boardArray = Array(this.props.height);
-    for (let y = 0; y < this.props.height; ++y) {
-      boardArray[y] = Array(this.props.width);
-      for (let x = 0; x < this.props.width; ++x) {
-        boardArray[y][x] = <Cell x={x} y={y} color={this.getRandomColor(colors.length)} onClick={this.onClick} key={x + ',' + y} team={0} />;
-        //boardArray[y][x] = new Cell(y, x, this.getRandomColor(colors.length));
-      }
-    }
-
-    this.state = {
-      board: boardArray,
-    };
+    // let boardArray = Array(this.props.height);
+    // for (let y = 0; y < this.props.height; ++y) {
+    //   boardArray[y] = Array(this.props.width);
+    //   for (let x = 0; x < this.props.width; ++x) {
+    //     boardArray[y][x] = <Cell x={x} y={y} color={this.getRandomColor(colors.length)} onClick={this.onClick} key={x + ',' + y} team={0} />;
+    //     //boardArray[y][x] = new Cell(y, x, this.getRandomColor(colors.length));
+    //   }
+    // }
   }
 
   getRandomColor(max = colors.length) {
@@ -38,8 +34,16 @@ export default class Board extends Component {
   }
 
   render() {
-    return this.state.board.map((col, y) => col.map((item, x) => {
-      return this.state.board[y][x];
+    console.log('rendering');
+    if (this.props.board == null) {
+      console.log('null');
+      return (
+        <div>No board data</div>
+      )
+    }
+    console.log('not null');
+    return this.props.board.map((col, y) => col.map((item, x) => {
+      return this.props.board[y][x];
     }));
   }
 }

@@ -28,7 +28,6 @@ export default class Homepage extends Component {
             headers: { "auth": token }
           });
           this.ws = new WebSocket('ws://localhost:5000/user/ws?auth=' + token);
-          console.log('ooga booga idk');
           this.ws.onopen = (event) => {
             console.log('connected to ws');
           };
