@@ -53,8 +53,10 @@ export default class Filler extends Component {
         <div className='game'>
           <div className="gameboard"
             style={
-              { gridTemplateRows: "repeat(" + this.props.boardHeight + ", " + (900 / this.props.boardHeight) + "px)" },
-              { gridTemplateColumns: "repeat(" + this.props.boardWidth + ", " + (900 / this.props.boardWidth) + "px)" }
+              {
+                gridTemplateRows: "repeat(" + this.props.boardHeight + ", " + (900 / this.props.boardHeight) + "px)",
+                gridTemplateColumns: "repeat(" + this.props.boardWidth + ", " + (900 / this.props.boardWidth) + "px)"
+              }
             }
           >
             <Board width={9} height={9} gameId={0} board={this.state.board} />

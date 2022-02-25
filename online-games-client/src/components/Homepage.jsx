@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../firebase';
 import './homepage.css';
 import Filler from './Filler';
