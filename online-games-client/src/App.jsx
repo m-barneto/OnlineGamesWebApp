@@ -9,17 +9,20 @@ import Homepage from './components/Homepage';
 import Filler from './components/Filler';
 import InvitePage from './components/InvitePage';
 import Invite from './components/Invite';
+import Welcome from './components/Welcome';
+import Header from './components/Header';
 
 export default class App extends Component {
   render() {
     return (
       <Router>
+
         <div className='app'>
+          <Header />
           <Routes>
             <Route path='filler/:id' element={<Filler />} />
             <Route path="invite/:code" element={<Invite />} />
-            <Route path="invite" element={<InvitePage />} />
-            <Route path="/" element={<Homepage />} />
+            <Route path="/" element={<Welcome />} />
           </Routes>
         </div>
       </Router>

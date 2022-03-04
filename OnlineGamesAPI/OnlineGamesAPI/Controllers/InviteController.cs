@@ -32,6 +32,24 @@ namespace OnlineGamesAPI.Controllers {
             return invite;
         }
 
+        private async Task<string?> GetGameCode() {
+            string code = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+            int timeout = 0;
+
+            while ((await (from g in db.FillerGames where g.GameId == code select g).ToListAsync()).Count > 0) {
+                Console.WriteLine("Creating new game id since first was found in the db");
+                if (timeout > 30) {
+                    // unlucky ig
+                    Console.WriteLine("Tried to create a game id 30 times, exiting now");
+                    return null;
+                }
+                code = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+                timeout++;
+            }
+            Console.WriteLine($"Game id {code} has been created.");
+            return code;
+        }
+
         [HttpGet]
         [Route("invites")]
         public async Task<IActionResult> Invites() {
@@ -87,6 +105,56 @@ namespace OnlineGamesAPI.Controllers {
                 await db.SaveChangesAsync();
 
                 await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(invite)));
+
+                return new EmptyResult();
+            } catch (Exception e) {
+                Console.WriteLine(e);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost]
+        [Route("joininvite/{inviteCode}")]
+        public async Task<IActionResult> JoinInvite(string inviteCode) {
+            try {
+                UserModel user = Helper.GetUserModelFromJson(Request.Headers["user"]);
+                UserModel? u = await db.Users.FindAsync(user.Id);
+
+                // Unregistered user
+                if (u == null) return BadRequest();
+                
+                List<InviteModel> invites = (await (from i in db.Invites where i.InviteCode == inviteCode select i).ToListAsync());
+                
+                if (invites.Count == 0) return BadRequest();
+
+                InviteModel invite = invites[0];
+                
+                // Invite doesn't exist
+                if (invite == null) return BadRequest();
+
+                // User requesting to join is the creator
+                if (u.Id == invite.CreatorId) return BadRequest();
+
+                // Invite is valid, create a matching game then delete it from the invites db
+                string? gameId = await GetGameCode();
+                if (gameId == null) return StatusCode(500);
+
+                FillerGameModel filler = new FillerGameModel() {
+                    CreatorId = invite.CreatorId,
+                    Players = invite.CreatorId + ',' + u.Id,
+                    GameId = gameId,
+                    GameCreationTime = DateTime.Now.Ticks,
+                    LastActiveTime = DateTime.Now.Ticks,
+                    GameData = Helper.InitializeFillerGameData(int.Parse(invite.InviteData))
+                };
+
+                await db.FillerGames.AddAsync(filler);
+
+                db.Invites.Remove(invite);
+
+                await db.SaveChangesAsync();
+
+                await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(filler.GameId)));
 
                 return new EmptyResult();
             } catch (Exception e) {

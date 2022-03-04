@@ -39,8 +39,8 @@ namespace OnlineGamesAPI.Controllers {
 
         [HttpGet]
         [Route("getgamestate/{gameId}")]
-        public async Task<IActionResult> GetGameState(int gameId) {
-            FillerGameModel? game = await db.FillerGames.FindAsync(gameId.ToString());
+        public async Task<IActionResult> GetGameState(string gameId) {
+            FillerGameModel? game = await db.FillerGames.FindAsync(gameId);
             if (game == null) {
                 return NotFound();
             }

@@ -10,10 +10,6 @@ const colors = [
 ];
 
 export default class Cell extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <div className="tile" style={{ backgroundColor: colors[this.props.color] }} onClick={() => this.props.onClick(this.props.x, this.props.y, this.props.team)} />

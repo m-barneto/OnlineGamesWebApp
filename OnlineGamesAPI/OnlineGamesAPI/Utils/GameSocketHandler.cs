@@ -17,8 +17,13 @@ namespace OnlineGamesAPI.Utils {
         public override async Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer) {
             var socketId = WebSocketManager.GetId(socket);
             var message = $"{socketId} said: {Encoding.UTF8.GetString(buffer, 0, result.Count)}";
-
+            Console.WriteLine(message);
             await SendMessageToAllAsync(message);
+        }
+
+        public override async Task OnDisconnected(WebSocket socket) {
+            Console.WriteLine("Socket disconnected");
+            await base.OnDisconnected(socket);
         }
     }
 }

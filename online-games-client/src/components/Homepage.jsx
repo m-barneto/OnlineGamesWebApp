@@ -60,6 +60,15 @@ export default class Homepage extends Component {
           <hr />
         </div>
         <div className='body'>
+          {auth.currentUser
+            ? <div>
+              <h1>Currently logged in</h1>
+            </div>
+
+            : <div>
+              <h1>Not logged in</h1>
+            </div>
+          }
           <h1 style={{ textAlign: 'center', fontSize: 50, color: '#fff' }}>Filler</h1>
           <Filler boardHeight={9} boardWidth={9} />
         </div>

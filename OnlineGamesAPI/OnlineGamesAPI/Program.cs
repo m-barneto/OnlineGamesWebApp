@@ -64,7 +64,7 @@ app.Use(async (ctx, next) => {
         Console.WriteLine(ex);
         ctx.Response.StatusCode = StatusCodes.Status500InternalServerError;
     } catch (Exception ex) {
-        Console.WriteLine(ex);
+        Console.WriteLine(ex.Message);
         ctx.Response.StatusCode = StatusCodes.Status500InternalServerError;
     }
 });

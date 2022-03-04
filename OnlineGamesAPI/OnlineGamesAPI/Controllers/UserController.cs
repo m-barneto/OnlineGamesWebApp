@@ -59,7 +59,7 @@ namespace OnlineGamesAPI.Controllers {
                     return;
                 }
             });
-            return StatusCode(101);
+            return new EmptyResult();
         }
 
         private async Task Receive(WebSocket socket, Action<WebSocketReceiveResult, byte[]> handleMessage) {
