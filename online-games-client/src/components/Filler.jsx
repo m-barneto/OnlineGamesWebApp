@@ -25,7 +25,17 @@ class Filler extends Component {
   }
 
   onCellClick = (x, y) => {
-    console.log('on cell clicked: ' + x + ', ' + y);
+    console.log("Clicked (" + x + ", " + y + "): " + this.state.board[y][x].props.color);
+    auth.currentUser.getIdToken().then((token) => {
+      fetch('http://localhost:5000/filler/move/' + this.state.id + "/" + this.state.board[y][x].props.color, {
+        method: "POST",
+        headers: { "auth": token }
+      }).then(resp => {
+        if (resp.status === 200) {
+          this.updateBoard();
+        }
+      })
+    });
   }
 
   componentWillUnmount() {
@@ -33,8 +43,6 @@ class Filler extends Component {
       this.authListener();
     }
     this.authListener = undefined;
-    this.ws.send("Closing...");
-    this.ws.close();
   }
 
   componentDidMount() {
@@ -49,27 +57,33 @@ class Filler extends Component {
             console.log('disconnected from ws');
           };
           this.ws.onmessage = (event) => {
-            console.log(event.data);
+            if (event.data === this.state.id) {
+              this.updateBoard();
+            }
           };
-
-          fetch('http://localhost:5000/filler/getgamestate/' + this.state.id, {
-            method: "GET",
-            headers: { "auth": token }
-          }).then(resp => resp.json())
-            .then(data => {
-              this.ws.send("Hello!");
-              this.setState({ size: data["size"] });
-              let boardArray = Array(data["size"]);
-              for (let y = 0; y < data["size"]; ++y) {
-                boardArray[y] = Array(data["size"]);
-                for (let x = 0; x < data["size"]; ++x) {
-                  boardArray[y][x] = <Cell x={x} y={y} color={data["board"][y * data["size"] + x]} onClick={this.onCellClick} key={x + ',' + y} team={0} />;
-                }
-              }
-              this.setState({ board: boardArray });
-            });
         });
+        this.updateBoard();
       }
+    });
+  }
+
+  updateBoard = () => {
+    auth.currentUser.getIdToken().then((token) => {
+      fetch('http://localhost:5000/filler/getgamestate/' + this.state.id, {
+        method: "GET",
+        headers: { "auth": token }
+      }).then(resp => resp.json())
+        .then(data => {
+          this.setState({ size: data["size"] });
+          let boardArray = Array(this.state.size);
+          for (let y = 0; y < this.state.size; ++y) {
+            boardArray[y] = Array(this.state.size);
+            for (let x = 0; x < this.state.size; ++x) {
+              boardArray[y][x] = <Cell x={x} y={y} color={data["board"][y * this.state.size + x]["color"]} onClick={this.onCellClick} key={x + ',' + y} />;
+            }
+          }
+          this.setState({ board: boardArray });
+        });
     });
   }
 

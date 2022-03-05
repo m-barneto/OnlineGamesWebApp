@@ -69,4 +69,15 @@ app.Use(async (ctx, next) => {
     }
 });
 
+FillerGameBoard board = JsonConvert.DeserializeObject<FillerGameBoard>(Helper.InitializeFillerGameData(9));
+while (true) {
+    Console.WriteLine(JsonConvert.SerializeObject(board));
+    Console.WriteLine("Enter the number to change index 0 to");
+    int color = int.Parse(Console.ReadLine());
+    board.ExecuteMove(0, color);
+
+}
+
+
+
 app.Run();

@@ -1,15 +1,23 @@
 ﻿namespace OnlineGamesAPI.Utils {
     [Serializable]
     public class FillerGameBoard {
+        public class Tile {
+            public int team;
+            public int color;
+            public Tile(int team, int color) {
+                this.team = team;
+                this.color = color;
+            }
+        }
         public int size;
-        public List<int> board;
+        public List<Tile> board;
 
         public int GetColor(int index) {
-            return board[index];
+            return board[index].color;
         }
 
         public int GetColor(int x, int y) {
-            return board[GetIndex(x, y)];
+            return board[GetIndex(x, y)].color;
         }
 
         int GetIndex(int index, int xOff, int yOff) {
@@ -25,34 +33,60 @@
         }
 
         public int ExecuteMove(int index, int newColor) {
-            /*
-            #         x  y   checked
-            tiles = {(x, y): False}
-            while False in tiles.values():
-                to_add = {}
-                for tile in tiles:
-                    if not tiles[tile]:
-                        self.get_neighbors(tile[0], tile[1], tiles, to_add, player)
-                tiles.update(to_add)
-            return tiles
-            */
-
+            int team = index == 0 ? 1 : 2;
             Dictionary<int, bool> tiles = new Dictionary<int, bool>();
-            board[index] = newColor;
+            board[index].color = newColor;
             tiles.Add(index, false);
+            int total = 0;
             while (tiles.ContainsValue(false)) {
-                Dictionary<int, bool> toAdd = new Dictionary<int, bool>();
+                List<int> toAdd = new();
                 foreach (var tile in tiles) {
                     if (!tile.Value) {
-                        // add neighbors to the toAdd dict
-                        GetNeighbors(tile.Key, ref toAdd);
+                        List<int> neighbors = new List<int>() {
+                            GetIndex(index, 1, 0),
+                            GetIndex(index, -1, 0),
+                            GetIndex(index, 0, 1),
+                            GetIndex(index, 0, -1)
+                        };
+                        foreach (var neighbor in neighbors) {
+                            if (neighbor < 0 || neighbor >= size * size) continue;
+
+                            /*
+                            if self.board[n[1]][n[0]].team == player.team:
+                                self.board[n[1]][n[0]].color = player.color
+                            if self.board[n[1]][n[0]].color != player.color:
+                                continue
+                            if n not in tiles:
+                                to_add[n] = False
+                             */
+                            if (board[neighbor].team == team) {
+                                board[neighbor].color = newColor;
+                            }
+                            if (board[neighbor].color != newColor) {
+                                continue;
+                            }
+                            if (!tiles.ContainsKey(neighbor)) {
+                                toAdd.Add(neighbor);
+                                total++;
+                            }
+                        }
+                        tiles[tile.Key] = true;
                     }
                 }
-                toAdd.ToList().ForEach(x => tiles.Add(x.Key, x.Value));
+                foreach (var tile in toAdd) {
+                    Console.WriteLine("REEEEE");
+                    tiles.Add(tile, false);
+                }
+                tiles.Add(14, false);
             }
             foreach (var tile in tiles) {
-                board[tile.Key] = newColor;
+                board[tile.Key].color = newColor;
+                board[tile.Key].team = team;
             }
+            Console.WriteLine(total);
+            Console.WriteLine(total);
+            Console.WriteLine(total);
+            Console.WriteLine(total);
             return 0;
         }
 

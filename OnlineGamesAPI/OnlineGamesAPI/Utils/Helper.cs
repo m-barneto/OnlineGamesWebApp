@@ -31,12 +31,16 @@ namespace OnlineGamesAPI.Utils {
             FillerGameBoard filler = new FillerGameBoard();
             filler.size = size;
 
-            filler.board = new List<int>();
+            filler.board = new List<FillerGameBoard.Tile>();
 
             for (int i = 0; i < size * size; i++) {
-                filler.board.Add(Random.Shared.Next(0, 5));
+                filler.board.Add(new FillerGameBoard.Tile(0, Random.Shared.Next(0, 5)));
             }
-            Console.WriteLine(JsonConvert.SerializeObject(filler));
+            while (filler.board[0].color == filler.board[size * size - 1].color) {
+                filler.board[0].color = Random.Shared.Next(0, 5);
+            }
+            filler.board[0].team = 1;
+            filler.board[size * size - 1].team = 2;
 
             return JsonConvert.SerializeObject(filler);
         }

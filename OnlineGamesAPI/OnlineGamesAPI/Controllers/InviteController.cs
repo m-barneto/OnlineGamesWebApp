@@ -124,16 +124,16 @@ namespace OnlineGamesAPI.Controllers {
                 if (u == null) return BadRequest();
                 
                 List<InviteModel> invites = (await (from i in db.Invites where i.InviteCode == inviteCode select i).ToListAsync());
-                
+
+                // Invite doesn't exist
+                await Response.BodyWriter.WriteAsync(Encoding.UTF8.GetBytes("No invite found."));
                 if (invites.Count == 0) return BadRequest();
 
                 InviteModel invite = invites[0];
-                
-                // Invite doesn't exist
-                if (invite == null) return BadRequest();
+
 
                 // User requesting to join is the creator
-                if (u.Id == invite.CreatorId) return BadRequest();
+                // if (u.Id == invite.CreatorId) return BadRequest();
 
                 // Invite is valid, create a matching game then delete it from the invites db
                 string? gameId = await GetGameCode();

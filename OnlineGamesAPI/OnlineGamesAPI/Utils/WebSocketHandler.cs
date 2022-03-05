@@ -24,7 +24,11 @@ namespace OnlineGamesAPI.Utils {
         }
 
         public async Task SendMessageAsync(string socketId, string message) {
-            await SendMessageAsync(WebSocketManager.GetSocketById(socketId), message);
+            WebSocket socket = WebSocketManager.GetSocketById(socketId);
+            if (socket == null) {
+                return;
+            }
+            await SendMessageAsync(socket, message);
         }
 
         public async Task SendMessageToAllAsync(string message) {

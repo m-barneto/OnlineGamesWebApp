@@ -57,8 +57,9 @@ namespace OnlineGamesAPI.Controllers {
 
         [HttpPost]
         [Route("move/{gameId}/{newColor}")]
-        public async Task<IActionResult> ExecuteMove(int gameId, int newColor) {
-            FillerGameModel? game = await db.FillerGames.FindAsync(gameId.ToString());
+        public async Task<IActionResult> ExecuteMove(string gameId, int newColor) {
+
+            FillerGameModel? game = await db.FillerGames.FindAsync(gameId);
             if (game == null) {
                 return NotFound();
             }
@@ -74,7 +75,7 @@ namespace OnlineGamesAPI.Controllers {
             }
 
             int userIndex = 0;
-            int opponentIndex = gameBoard.size * gameBoard.size;
+            int opponentIndex = gameBoard.size * gameBoard.size - 1;
             if (game.CreatorId != user.Id) {
                 // user is the second player, their square is at size, size
                 userIndex = gameBoard.size * gameBoard.size;
@@ -87,8 +88,19 @@ namespace OnlineGamesAPI.Controllers {
             } else if (gameBoard.GetColor(opponentIndex) == newColor) {
                 return BadRequest();
             }
-
             gameBoard.ExecuteMove(userIndex, newColor);
+            game.GameData = JsonConvert.SerializeObject(gameBoard);
+            db.FillerGames.Update(game);
+            await db.SaveChangesAsync();
+
+            string[] users = game.Players.Split(",");
+            string opponentId = users[0];
+            if (users[0] == user.Id) {
+                // send to users[1]
+                opponentId = users[1];
+            }
+
+            await GameSocketHandler.Instance.SendMessageAsync(opponentId, gameId);
 
             return Ok();
         }
