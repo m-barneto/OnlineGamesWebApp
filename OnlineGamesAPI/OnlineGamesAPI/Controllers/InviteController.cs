@@ -98,7 +98,7 @@ namespace OnlineGamesAPI.Controllers {
                 InviteModel invite = new InviteModel() {
                     CreatorId = u.Id,
                     InviteCode = inviteCode,
-                    InviteCreationTime = DateTime.Now.Ticks,
+                    InviteCreationTime = DateTime.UtcNow.Ticks,
                     InviteData = "" + boardSize
                 };
                 await db.Invites.AddAsync(invite);
@@ -126,14 +126,16 @@ namespace OnlineGamesAPI.Controllers {
                 List<InviteModel> invites = (await (from i in db.Invites where i.InviteCode == inviteCode select i).ToListAsync());
 
                 // Invite doesn't exist
-                await Response.BodyWriter.WriteAsync(Encoding.UTF8.GetBytes("No invite found."));
-                if (invites.Count == 0) return BadRequest();
+                if (invites.Count == 0) {
+                    await Response.BodyWriter.WriteAsync(Encoding.UTF8.GetBytes("No invite found."));
+                    return BadRequest();
+                }
 
                 InviteModel invite = invites[0];
 
 
                 // User requesting to join is the creator
-                // if (u.Id == invite.CreatorId) return BadRequest();
+                if (u.Id == invite.CreatorId) return BadRequest();
 
                 // Invite is valid, create a matching game then delete it from the invites db
                 string? gameId = await GetGameCode();
@@ -142,9 +144,10 @@ namespace OnlineGamesAPI.Controllers {
                 FillerGameModel filler = new FillerGameModel() {
                     CreatorId = invite.CreatorId,
                     Players = invite.CreatorId + ',' + u.Id,
+                    TurnId = u.Id,
                     GameId = gameId,
-                    GameCreationTime = DateTime.Now.Ticks,
-                    LastActiveTime = DateTime.Now.Ticks,
+                    GameCreationTime = DateTime.UtcNow.Ticks,
+                    LastActiveTime = DateTime.UtcNow.Ticks,
                     GameData = Helper.InitializeFillerGameData(int.Parse(invite.InviteData))
                 };
 

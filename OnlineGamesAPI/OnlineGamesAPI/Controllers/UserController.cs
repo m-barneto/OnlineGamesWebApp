@@ -26,11 +26,11 @@ namespace OnlineGamesAPI.Controllers {
                 UserModel? u = await db.Users.FindAsync(user.Id);
                 if (u != null) {
                     // Existing user
-                    u.LastSigninTime = DateTime.Now.Ticks;
+                    u.LastSigninTime = DateTime.UtcNow.Ticks;
                 } else {
                     // New user
-                    user.AccountCreateTime = DateTime.Now.Ticks;
-                    user.LastSigninTime = DateTime.Now.Ticks;
+                    user.AccountCreateTime = DateTime.UtcNow.Ticks;
+                    user.LastSigninTime = DateTime.UtcNow.Ticks;
                     await db.Users.AddAsync(user);
                 }
 

@@ -12,6 +12,9 @@ namespace OnlineGamesAPI.Data.Models {
         public string Players { get; set; } = string.Empty;
 
         [Required]
+        public string TurnId { get; set; } = string.Empty;
+
+        [Required]
         public long GameCreationTime { get; set; }
 
         [Required]

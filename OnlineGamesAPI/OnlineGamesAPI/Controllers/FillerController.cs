@@ -16,27 +16,6 @@ namespace OnlineGamesAPI.Controllers {
             this.db = db;
         }
 
-        [HttpPost]
-        [Route("creategame/{size}")]
-        public async Task<IActionResult> CreateGame(int size) {
-            Console.WriteLine("Create game");
-            JObject jObject = JsonConvert.DeserializeObject<JObject>(Request.Headers["user"]);
-
-
-            FillerGameModel game = new FillerGameModel();
-            game.GameId = "1";
-            game.CreatorId = jObject["Uid"].ToString();
-            game.Players = jObject["Uid"].ToString() + ',';
-            game.GameCreationTime = DateTime.Now.Ticks;
-            game.LastActiveTime = DateTime.Now.Ticks;
-            game.GameData = Helper.InitializeFillerGameData(size);
-
-            await db.FillerGames.AddAsync(game);
-            await db.SaveChangesAsync();
-            Console.WriteLine("Added game to db");
-            return new EmptyResult();
-        }
-
         [HttpGet]
         [Route("getgamestate/{gameId}")]
         public async Task<IActionResult> GetGameState(string gameId) {
@@ -69,29 +48,31 @@ namespace OnlineGamesAPI.Controllers {
                 return BadRequest();
             }
 
+            if (user.Id != game.TurnId) {
+                return BadRequest();
+            }
+
             FillerGameBoard? gameBoard = JsonConvert.DeserializeObject<FillerGameBoard>(game.GameData);
             if (gameBoard == null) {
-                return BadRequest();
+                return StatusCode(500);
             }
 
             int userIndex = 0;
             int opponentIndex = gameBoard.size * gameBoard.size - 1;
             if (game.CreatorId != user.Id) {
                 // user is the second player, their square is at size, size
-                userIndex = gameBoard.size * gameBoard.size;
+                userIndex = gameBoard.size * gameBoard.size - 1;
                 opponentIndex = 0;
             }
-
             // If userIndex or opponentIndex is the same color as newColor, bad request
             if (gameBoard.GetColor(userIndex) == newColor) {
                 return BadRequest();
             } else if (gameBoard.GetColor(opponentIndex) == newColor) {
                 return BadRequest();
             }
+
+
             gameBoard.ExecuteMove(userIndex, newColor);
-            game.GameData = JsonConvert.SerializeObject(gameBoard);
-            db.FillerGames.Update(game);
-            await db.SaveChangesAsync();
 
             string[] users = game.Players.Split(",");
             string opponentId = users[0];
@@ -99,6 +80,14 @@ namespace OnlineGamesAPI.Controllers {
                 // send to users[1]
                 opponentId = users[1];
             }
+
+            game.GameData = JsonConvert.SerializeObject(gameBoard);
+            game.TurnId = opponentId;
+            game.LastActiveTime = DateTime.UtcNow.Ticks;
+
+            db.FillerGames.Update(game);
+            await db.SaveChangesAsync();
+
 
             await GameSocketHandler.Instance.SendMessageAsync(opponentId, gameId);
 
