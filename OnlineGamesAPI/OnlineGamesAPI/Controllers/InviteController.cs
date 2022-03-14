@@ -148,7 +148,7 @@ namespace OnlineGamesAPI.Controllers {
                     GameId = gameId,
                     GameCreationTime = DateTime.UtcNow.Ticks,
                     LastActiveTime = DateTime.UtcNow.Ticks,
-                    GameData = Helper.InitializeFillerGameData(int.Parse(invite.InviteData))
+                    GameData = JsonConvert.SerializeObject(new FillerGameBoard(int.Parse(invite.InviteData))) //Helper.InitializeFillerGameData(int.Parse(invite.InviteData))
                 };
 
                 await db.FillerGames.AddAsync(filler);

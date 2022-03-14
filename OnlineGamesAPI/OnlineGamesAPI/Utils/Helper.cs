@@ -27,8 +27,8 @@ namespace OnlineGamesAPI.Utils {
 
         }
 
-        public static string InitializeFillerGameData(int size) {
-            FillerGameBoard filler = new FillerGameBoard();
+        private static string InitializeFillerGameData(int size) {
+            FillerGameBoard filler = new FillerGameBoard(size);
             filler.size = size;
 
             filler.board = new List<FillerGameBoard.Tile>();

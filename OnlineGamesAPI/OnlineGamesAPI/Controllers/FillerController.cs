@@ -65,9 +65,9 @@ namespace OnlineGamesAPI.Controllers {
                 opponentIndex = 0;
             }
             // If userIndex or opponentIndex is the same color as newColor, bad request
-            if (gameBoard.GetColor(userIndex) == newColor) {
+            if (gameBoard.GetColorByIndex(userIndex) == newColor) {
                 return BadRequest();
-            } else if (gameBoard.GetColor(opponentIndex) == newColor) {
+            } else if (gameBoard.GetColorByIndex(opponentIndex) == newColor) {
                 return BadRequest();
             }
 
