@@ -18,29 +18,23 @@ namespace OnlineGamesAPI.Utils {
             return clients.FirstOrDefault(p => p.Value == socket).Key;
         }
         public static void AddSocket(string id, WebSocket socket) {
-            Console.WriteLine($"Added socket: {id}");
             clients.TryAdd(id, socket);
         }
 
         public static async Task RemoveSocket(string id) {
             WebSocket socket;
 
-            Console.WriteLine($"Trying to remove socket: {id}");
             clients.TryRemove(id, out socket!);
 
             await socket!.CloseAsync(closeStatus: WebSocketCloseStatus.NormalClosure,
                                     statusDescription: "Closed by the SocketManager",
                                     cancellationToken: CancellationToken.None);
-
-            Console.WriteLine($"Shit on socket id: {id}");
         }
 
 
         public static async Task HandleSocketRequest(HttpRequest req, WebSocket ws) {
             UserModel user = Helper.GetUserModelFromJson(req.Headers["user"]);
             clients.TryAdd(user.Id, ws);
-
-            Console.WriteLine($"Wtf goes here: {user.Id}");
             clients.TryRemove(KeyValuePair.Create(user.Id, ws));
         }
     }
