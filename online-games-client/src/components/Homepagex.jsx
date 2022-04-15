@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../firebase';
+import './homepage.css';
+import Filler from './Filler';
 
-export default class Header extends Component {
+export default class Homepage extends Component {
+  ws = null;
+
   constructor(props) {
     super(props);
     this.state = { user: null };
   }
-
   handleLogin = () => {
     signInWithPopup(auth, provider);
   }
-
   handleLogout = () => {
     auth.signOut();
   }
@@ -25,6 +27,16 @@ export default class Header extends Component {
             method: "PUT",
             headers: { "auth": token }
           });
+          this.ws = new WebSocket('ws://localhost:5000/user/ws?auth=' + token);
+          this.ws.onopen = (event) => {
+            console.log('connected to ws');
+          };
+          this.ws.onclose = (event) => {
+            console.log('disconnected from ws');
+          };
+          this.ws.onmessage = (event) => {
+            console.log(event.data);
+          };
         });
       }
     });
@@ -42,13 +54,20 @@ export default class Header extends Component {
 
   render() {
     return (
-      <div className='topbar' style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-        {this.state.user
-          && <img alt={this.state.user.displayName} title={this.state.user.displayName} src={this.state.user.photoURL} style={{ width: '50px', height: '50px', borderRadius: '50px' }} />
-        }
+      <div>
+        <div className='body'>
+          {auth.currentUser
+            ? <div>
+              <h1>Currently logged in</h1>
+            </div>
 
-        <button onClick={this.state.user == null ? this.handleLogin : this.handleLogout}>{!this.state.user ? 'Login' : 'Logout'}</button>
-        <hr />
+            : <div>
+              <h1>Not logged in</h1>
+            </div>
+          }
+          <h1 style={{ textAlign: 'center', fontSize: 50, color: '#fff' }}>Filler</h1>
+          <Filler boardHeight={9} boardWidth={9} />
+        </div>
       </div>
     )
   }

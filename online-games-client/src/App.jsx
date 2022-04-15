@@ -10,7 +10,7 @@ import Filler from './components/Filler';
 import InvitePage from './components/InvitePage';
 import Invite from './components/Invite';
 import Welcome from './components/Welcome';
-import Header from './components/Header';
+import Topbar from './components/Topbar';
 
 export default class App extends Component {
   render() {
@@ -18,7 +18,7 @@ export default class App extends Component {
       <Router>
 
         <div className='app'>
-          <Header />
+          <Topbar />
           <Routes>
             <Route path='filler/:id' element={<Filler />} />
             <Route path="invite/:code" element={<Invite />} />
