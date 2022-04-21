@@ -70,11 +70,11 @@ export default class Topbar extends Component {
             && <img alt={this.state.user.displayName} title={this.state.user.displayName} src={this.state.user.photoURL} style={{ width: '50px', height: '50px', borderRadius: '50px', padding: '0' }} />
           }
 
-          < button onClick={this.state.user == null ? this.handleLogin : this.handleLogout} style={{
+          <input type='button' onClick={this.state.user == null ? this.handleLogin : this.handleLogout} style={{
             height: '50px',
             margin: '3px',
             borderRadius: '.75em'
-          }}> {!this.state.user ? 'Login' : 'Logout'}</button >
+          }} value={!this.state.user ? 'Login' : 'Logout'} />
         </div>
 
       </div >
