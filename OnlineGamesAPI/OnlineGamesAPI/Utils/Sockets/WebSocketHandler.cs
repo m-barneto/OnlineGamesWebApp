@@ -1,21 +1,22 @@
-﻿using System.Net.WebSockets;
+﻿using OnlineGamesAPI.Utils.Sockets;
+using System.Net.WebSockets;
 using System.Text;
 
 namespace OnlineGamesAPI.Utils {
     public abstract class WebSocketHandler {
-        public virtual async Task OnConnected(string id, WebSocket socket) {
-            WebSocketManager.AddSocket(id, socket);
+        public virtual async Task OnConnected(UserSocket userSocket) {
+            WebSocketManager.AddSocket(userSocket);
         }
 
-        public virtual async Task OnDisconnected(WebSocket socket) {
-            await WebSocketManager.RemoveSocket(WebSocketManager.GetId(socket));
+        public virtual async Task OnDisconnected(UserSocket userSocket) {
+            await WebSocketManager.RemoveSocket(userSocket.userId);
         }
 
-        public async Task SendMessageAsync(WebSocket socket, string message) {
-            if (socket.State != WebSocketState.Open)
+        public async Task SendMessageAsync(UserSocket userSocket, string message) {
+            if (userSocket.socket.State != WebSocketState.Open)
                 return;
 
-            await socket.SendAsync(buffer: new ArraySegment<byte>(array: Encoding.ASCII.GetBytes(message),
+            await userSocket.socket.SendAsync(buffer: new ArraySegment<byte>(array: Encoding.ASCII.GetBytes(message),
                                                                     offset: 0,
                                                                     count: message.Length),
                                     messageType: WebSocketMessageType.Text,
@@ -24,7 +25,7 @@ namespace OnlineGamesAPI.Utils {
         }
 
         public async Task SendMessageAsync(string socketId, string message) {
-            WebSocket socket = WebSocketManager.GetSocketById(socketId);
+            UserSocket socket = WebSocketManager.GetSocketById(socketId);
             if (socket == null) {
                 return;
             }
@@ -33,11 +34,11 @@ namespace OnlineGamesAPI.Utils {
 
         public async Task SendMessageToAllAsync(string message) {
             foreach (var pair in WebSocketManager.GetAll()) {
-                if (pair.Value.State == WebSocketState.Open)
+                if (pair.Value.socket.State == WebSocketState.Open)
                     await SendMessageAsync(pair.Value, message);
             }
         }
 
-        public abstract Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer);
+        public abstract Task ReceiveAsync(UserSocket userSocket, WebSocketReceiveResult result, byte[] buffer);
     }
 }

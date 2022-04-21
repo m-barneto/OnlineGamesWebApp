@@ -44,14 +44,14 @@
             
             // Double check the indices here
             while (board[board.Count - 1].color == board[board.Count - 2].color) {
-                board[board.Count - 2].color = Random.Shared.Next();
+                board[board.Count - 2].color = Random.Shared.Next(0, 5);
             }
             while (board[board.Count - 1].color == board[board.Count - size - 1].color) {
-                board[board.Count - size - 1].color = Random.Shared.Next();
+                board[board.Count - size - 1].color = Random.Shared.Next(0, 5);
             }
             // Shouldnt this be made sure with a check for players key index? since it could be randomly set to the same color on accident
             while (board[board.Count - 2].color == board[board.Count - size - 1].color) {
-                board[board.Count - 2].color = Random.Shared.Next();
+                board[board.Count - 2].color = Random.Shared.Next(0, 5);
             }
 
             for (int y = 0; y < size; y++) {
@@ -85,6 +85,7 @@
             while (list.Contains(val)) {
                 val = Random.Shared.Next(0, 5);
             }
+            Console.WriteLine(val);
             return val;
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Net.WebSockets;
+﻿using OnlineGamesAPI.Utils.Sockets;
+using System.Net.WebSockets;
 using System.Text;
 
 namespace OnlineGamesAPI.Utils {
@@ -9,21 +10,20 @@ namespace OnlineGamesAPI.Utils {
         public static GameSocketHandler Instance { get { return instance; } }
 
 
-        public override async Task OnConnected(string id, WebSocket socket) {
-            await base.OnConnected(id, socket);
-            await SendMessageToAllAsync($"{id} is now connected");
+        public override async Task OnConnected(UserSocket userSocket) {
+            await base.OnConnected(userSocket);
+            await SendMessageToAllAsync($"{userSocket.userId} is now connected");
         }
 
-        public override async Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer) {
-            var socketId = WebSocketManager.GetId(socket);
-            var message = $"{socketId} said: {Encoding.UTF8.GetString(buffer, 0, result.Count)}";
+        public override async Task ReceiveAsync(UserSocket userSocket, WebSocketReceiveResult result, byte[] buffer) {
+            var message = $"{userSocket.userId} said: {Encoding.UTF8.GetString(buffer, 0, result.Count)}";
             Console.WriteLine(message);
             await SendMessageToAllAsync(message);
         }
 
-        public override async Task OnDisconnected(WebSocket socket) {
+        public override async Task OnDisconnected(UserSocket userSocket) {
             Console.WriteLine("Socket disconnected");
-            await base.OnDisconnected(socket);
+            await base.OnDisconnected(userSocket);
         }
     }
 }

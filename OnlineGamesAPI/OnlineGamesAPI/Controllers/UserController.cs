@@ -7,6 +7,7 @@ using OnlineGamesAPI.Data;
 using OnlineGamesAPI.Utils;
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
+using OnlineGamesAPI.Utils.Sockets;
 
 namespace OnlineGamesAPI.Controllers {
     [ApiController]
@@ -48,25 +49,26 @@ namespace OnlineGamesAPI.Controllers {
             UserModel user = Helper.GetUserModelFromJson(Request.Headers["user"]);
 
             var socket = await Request.HttpContext.WebSockets.AcceptWebSocketAsync();
-            await GameSocketHandler.Instance.OnConnected(user.Id, socket);
+            UserSocket userSocket = new UserSocket(user.Id, socket);
+            await GameSocketHandler.Instance.OnConnected(userSocket);
 
-            await Receive(socket, async (result, buffer) => {
+            await Receive(userSocket, async (result, buffer) => {
                 if (result.MessageType == WebSocketMessageType.Text) {
-                    await GameSocketHandler.Instance.ReceiveAsync(socket, result, buffer);
+                    await GameSocketHandler.Instance.ReceiveAsync(userSocket, result, buffer);
                     return;
                 } else if (result.MessageType == WebSocketMessageType.Close) {
-                    await GameSocketHandler.Instance.OnDisconnected(socket);
+                    await GameSocketHandler.Instance.OnDisconnected(userSocket);
                     return;
                 }
             });
             return new EmptyResult();
         }
 
-        private async Task Receive(WebSocket socket, Action<WebSocketReceiveResult, byte[]> handleMessage) {
+        private async Task Receive(UserSocket userSocket, Action<WebSocketReceiveResult, byte[]> handleMessage) {
             var buffer = new byte[1024 * 4];
 
-            while (socket.State == WebSocketState.Open) {
-                var result = await socket.ReceiveAsync(buffer: new ArraySegment<byte>(buffer),
+            while (userSocket.socket.State == WebSocketState.Open) {
+                var result = await userSocket.socket.ReceiveAsync(buffer: new ArraySegment<byte>(buffer),
                                                         cancellationToken: CancellationToken.None);
 
                 handleMessage(result, buffer);

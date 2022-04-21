@@ -28,7 +28,7 @@ namespace OnlineGamesAPI.Controllers {
             if (!game.Players.Contains(user.Id)) {
                 return BadRequest();
             }
-
+            Console.WriteLine(game.GameData);
             await HttpContext.Response.Body.WriteAsync(Encoding.UTF8.GetBytes(game.GameData));
 
             return new EmptyResult();
