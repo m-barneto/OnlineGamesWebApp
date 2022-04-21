@@ -75,6 +75,7 @@ class Filler extends Component {
       }).then(resp => resp.json())
         .then(data => {
           this.setState({ size: data["size"] });
+          console.log(data["board"]);
           let boardArray = Array(this.state.size);
           for (let y = 0; y < this.state.size; ++y) {
             boardArray[y] = Array(this.state.size);
@@ -94,8 +95,8 @@ class Filler extends Component {
           <div className="gameboard"
             style={
               {
-                gridTemplateRows: "repeat(" + this.state.size + ", " + (900 / this.state.size) + "px)",
-                gridTemplateColumns: "repeat(" + this.state.size + ", " + (900 / this.state.size) + "px)"
+                gridTemplateRows: "repeat(" + this.state.size + ", " + (800 / this.state.size) + "px)",
+                gridTemplateColumns: "repeat(" + this.state.size + ", " + (800 / this.state.size) + "px)"
               }
             }
           >

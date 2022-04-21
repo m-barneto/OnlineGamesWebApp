@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import { auth } from '../firebase';
 
 export function withRouter(Children) {
@@ -10,6 +10,12 @@ export function withRouter(Children) {
 }
 
 class Invite extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      gameId: null
+    }
+  }
   componentWillUnmount() {
     if (this.authListener) {
       this.authListener();
@@ -27,7 +33,7 @@ class Invite extends Component {
             method: "POST",
             headers: { "auth": token } // token
           }).then(resp => resp.json()).then(data => {
-            console.log(data);
+            this.setState({ gameId: data });
           })
         });
       }
@@ -37,7 +43,11 @@ class Invite extends Component {
     const { code } = this.props.match.params;
 
     return (
-      <div>Invite {code}</div>
+      <div>
+        Invite {code}
+        {this.state.gameId
+          && <Navigate to={"/filler/" + this.state.gameId} />}
+      </div>
     )
   }
 }

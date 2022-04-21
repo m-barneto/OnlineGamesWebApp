@@ -1,0 +1,12 @@
+.tile {
+  opacity: 1;
+  transition-duration: 250ms;
+}
+
+.tile:hover {
+  opacity: .8;
+}
+
+.tile::after {
+  opacity: .2;
+}

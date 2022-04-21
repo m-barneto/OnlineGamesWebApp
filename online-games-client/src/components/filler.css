@@ -7,8 +7,8 @@
 
 .gameboard {
   display: grid;
-  width: 900px; /* 30vw */
-  height: 900px;
+  width: 800px; /* 30vw */
+  height: 800px;
   background-color: rgb(14, 14, 14);
   border-radius: 9px;
   padding: 2px;

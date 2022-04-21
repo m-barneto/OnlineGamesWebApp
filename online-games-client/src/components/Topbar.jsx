@@ -40,44 +40,61 @@ export default class Topbar extends Component {
     this.authListener = undefined;
   }
 
+  imgErr(ev) {
+    ev.target.src = 'https://cdn.discordapp.com/attachments/590552347441102848/966706967362019328/unknown.png';
+  }
+
   render() {
     return (
-      /*
-#topBar {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: right;
-  justify-content: space-between;
-}
-      */
       <div className='topbar' style={{
+        minWidth: 'auto',
         width: '100%',
-        height: '60px',
+        height: '50px',
         display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        alignItems: 'right'
+        justifyContent: 'space-between',
       }
       }>
-        <div id='end' style={{
-          minWidth: '200px',
-          alignItems: 'center',
-          justifyContent: 'flex-end'
-        }}>
-          {
-            this.state.user
-            && <img alt={this.state.user.displayName} title={this.state.user.displayName} src={this.state.user.photoURL} style={{ width: '50px', height: '50px', borderRadius: '50px', padding: '0' }} />
-          }
-
-          <input type='button' onClick={this.state.user == null ? this.handleLogin : this.handleLogout} style={{
-            height: '50px',
-            margin: '3px',
-            borderRadius: '.75em'
-          }} value={!this.state.user ? 'Login' : 'Logout'} />
-        </div>
-
-      </div >
+        <h1>FILLER</h1>
+        {
+          this.state.user
+            ? <div style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              minWidth: 'auto',
+              width: '200px',
+              alignItems: 'center'
+            }}>
+              <span className='material-icons'>notifications_none</span>
+              <span className='material-icons'>mail</span>
+              <img alt='' onError={this.imgErr} src={this.state.user.photoURL} style={{ width: '40px', height: '40px', borderRadius: '40px', padding: '0', border: '1px solid' }} />
+              <button className='material-icons' onClick={this.handleLogout} style={{
+                height: '50px',
+                margin: '3px',
+                borderRadius: '.75em',
+                background: 'rgba(0,0,0,0)',
+                borderColor: 'transparent',
+                color: 'white'
+              }}>logout</button>
+            </div>
+            : <div style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignContent: 'stretch',
+              minWidth: 'auto'
+            }}>
+              <button className='material-icons' onClick={this.handleLogin} style={{
+                height: '50px',
+                margin: '3px',
+                borderRadius: '.75em',
+                border: '0px',
+                background: 'rgba(0,0,0,0)',
+                borderColor: 'transparent',
+                color: 'white'
+              }}>login</button>
+            </div>
+        }
+      </div>
     )
   }
 }

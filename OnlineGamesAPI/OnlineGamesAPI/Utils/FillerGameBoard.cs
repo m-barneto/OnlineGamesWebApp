@@ -13,58 +13,6 @@
         public List<Tile> board;
 
         public FillerGameBoard(int size) {
-            /*
-             * # Make sure the player starting pieces arent the same color
-        while self.board[0][0].color == self.board[self.size - 1][self.size - 1].color:
-            self.board[0][0].color = self.rand_color()
-
-        # Make sure surrounding tiles aren't the same color as player 1's starting piece
-        while self.board[0][0].color == self.board[0][1].color:
-            self.board[0][1].color = self.rand_color()
-        while self.board[0][0].color == self.board[1][0].color:
-            self.board[1][0].color = self.rand_color()
-        # Make sure the surrounding tiles around player 1 aren't the same color as each other
-        while self.board[0][1].color == self.board[1][0].color:
-            self.board[0][1].color = self.rand_color()
-
-        # Make sure surrounding tiles aren't the same color as player 2's starting piece
-        while self.board[self.size - 1][self.size - 1].color == self.board[self.size - 1][self.size - 2].color:
-            self.board[self.size - 1][self.size - 2].color = self.rand_color()
-        while self.board[self.size - 1][self.size - 1].color == self.board[self.size - 2][self.size - 1].color:
-            self.board[self.size - 2][self.size - 1].color = self.rand_color()
-        # Make sure the surrounding tiles around player 2 aren't the same color as each other
-        while self.board[self.size - 1][self.size - 2].color == self.board[self.size - 2][self.size - 1].color:
-            self.board[self.size - 1][self.size - 2].color = self.rand_color()
-
-        for y in range(self.size):
-            for x in range(self.size):
-                # region poop
-                if y == 0 and x == 0:
-                    continue
-                if y == 1 and x == 0:
-                    continue
-                if y == 0 and x == 1:
-                    continue
-                if y == self.size - 1 and x == self.size - 1:
-                    continue
-                if y == self.size - 2 and x == self.size - 1:
-                    continue
-                if y == self.size - 1 and x == self.size - 2:
-                    continue
-                # endregion
-                neighbors = [
-                    self.get_adj(x, y, 0, 1),
-                    self.get_adj(x, y, 0, -1),
-                    self.get_adj(x, y, 1, 0),
-                    self.get_adj(x, y, -1, 0)
-                ]
-                ex = []
-                for n in neighbors:
-                    if n:
-                        ex.append(self.data.filler_emotes[self.board[n[1]][n[0]].color])
-                self.board[y][x].color = self.get_rand_except(ex)
-
-             */
             this.size = size;
             board = new List<Tile>();
             for (int i = 0; i < size * size; i++) {
@@ -79,16 +27,7 @@
             while (GetColor(0, 0) == GetColor(size - 1, size - 1)) {
                 board[0].color = Random.Shared.Next(0, 5);
             }
-            /**
-            # Make sure surrounding tiles aren't the same color as player 1's starting piece
-            while self.board[0][0].color == self.board[0][1].color:
-                self.board[0][1].color = self.rand_color()
-            while self.board[0][0].color == self.board[1][0].color:
-                self.board[1][0].color = self.rand_color()
-            # Make sure the surrounding tiles around player 1 aren't the same color as each other
-            while self.board[0][1].color == self.board[1][0].color:
-                self.board[0][1].color = self.rand_color()
-            **/
+
             // Make sure surrounding tiles aren't the same color as player 1's starting piece
             while (board[0].color == board[1].color) {
                 board[1].color = Random.Shared.Next(0, 5);
@@ -102,16 +41,7 @@
             }
 
             // Do the same for player 2
-            /**
-            Make sure surrounding tiles aren't the same color as player 2's starting piece
-            while self.board[self.size - 1][self.size - 1].color == self.board[self.size - 1][self.size - 2].color:
-                self.board[self.size - 1][self.size - 2].color = self.rand_color()
-            while self.board[self.size - 1][self.size - 1].color == self.board[self.size - 2][self.size - 1].color:
-                self.board[self.size - 2][self.size - 1].color = self.rand_color()
-            # Make sure the surrounding tiles around player 2 aren't the same color as each other
-            while self.board[self.size - 1][self.size - 2].color == self.board[self.size - 2][self.size - 1].color:
-                self.board[self.size - 1][self.size - 2].color = self.rand_color()
-            **/
+            
             // Double check the indices here
             while (board[board.Count - 1].color == board[board.Count - 2].color) {
                 board[board.Count - 2].color = Random.Shared.Next();
@@ -127,11 +57,9 @@
             for (int y = 0; y < size; y++) {
                 for (int x = 0; x < size; x++) {
                     if (x == 0 && y == 0 || x == 0 && y == 1 || x == 1 && y == 0) {
-                        Console.WriteLine($"Skipped ({x},{y})");
                         continue;
                     }
                     if (x == size - 1 && y == size - 1 || x == size - 1 && y == size - 2 || x == size - 2 && y == size - 1) {
-                        Console.WriteLine($"Skipped ({x},{y})");
                         continue;
                     }
                     List<int> neighborColors = new() {

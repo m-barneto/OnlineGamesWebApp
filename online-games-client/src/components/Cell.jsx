@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './cell.css'
 
 const colors = [
   "rgb(131, 89, 149)",
